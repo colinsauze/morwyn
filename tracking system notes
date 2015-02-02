@@ -1,0 +1,66 @@
+buckets system:
+
+for each type of value we need to break its ranges into several buckets
+
+buckets might be different sizes
+some buckets might have a less than or greater than value range, others might be between two value ranges
+
+could just be a whole series of arrays
+if statements
+
+
+struct bucket_item {
+int min_value;
+int max_value;
+byte count;
+}
+
+Parameters to store in buckets:
+
+heading (0-360, 10 degree increments) 10 bytes + 40 bytes
+wind direction (0-360, 10 degree increments) 10 bytes + 40 bytes
+roll (-60 to +60 10 degree increments, need a beyond -60/+60) 10 bytes + 40 bytes
+pitch (-60 to +60 10 degree increments, need a beyond -60/+60) 10 bytes + 40 bytes
+motor battery current (0-3, 15 0.2 amp buckets, need a beyond 3. Change to integers, make it 0-30.) 15 bytes + 60 bytes
+motor battery voltage (6-9, 15 0.2 volt buckets, need a below 6 and above 9.) 15 bytes + 60 bytes
+computer battery current (0-1, 5 0.2 amp buckets, need a beyond 1. Change to integers, make it 0-10.) 15 bytes + 60 bytes
+computer battery voltage (3-4.6, 8 0.2 volt buckets, need a below 3 and above 4.6.) 8 bytes + 32 bytes
+rudder position (-5 to +5, 10 buckets) 10 bytes + 40 bytes
+sail position (0 to +5, 5 buckets) 5 bytes + 20 bytes
+
+total data representation: 108 bytes
+total range representation: 432 bytes
+
+To keep counts in 8 bit range we can only sample once every 4 seconds, if transmitting every 15 minutes.
+
+3.22 mV resolution, 242.3 mV/Volt, 73.2mV/amp  0.044 amp resolution, 0.13 volt resolution
+
+Should we try to use a uLog to track all power consumption? Could do an incremental watt hours meter, would know how much battery is left. Does voltage tell us this anyway?
+Do we want a realtime clock module? Less power than the GPS. Could use arduino to track time though. 
+
+things to transmit:
+
+heading bucket
+wind bucket
+roll bucket
+pitch bucket
+current buckets
+voltage buckets
+temperature x2 instant
+lat/lon x2 instant
+
+
+message format:
+
+
+126 bytes total
+
+3 credits per message
+1 message every 15 min
+
+4996 credits available 
+
+1665 messages
+
+at 4 per hour = 416 hours, 17 days
+
